@@ -1,1 +1,126 @@
 # Coinsburg
+# Quantitative Cup & Handle Pattern Detector for BTC/USDT Futures
+
+This project is a complete, end-to-end quantitative system designed to automatically detect, validate, and visualize **"Cup and Handle"** chart patterns from high-frequency cryptocurrency financial data. The system fetches 1-minute BTC/USDT futures data from Binance, applies a rigorous set of validation rules to identify high-probability patterns, and generates a comprehensive set of visual and data-driven reports.
+
+---
+
+## ✨ Features
+
+* **Automated Data Pipeline**: Includes a script (`download_data.py`) to automatically fetch and prepare a full year of 1-minute data from Binance.
+* **Robust Detection Engine**: Uses `scipy.signal.find_peaks` to identify patterns and applies over 7 financial rules (duration, depth, parabolic fit, retracement levels, etc.).
+* **Comprehensive Visualization Suite**:
+
+  * Static `.png` images for visual inspection.
+  * Fully interactive `.html` plots via Plotly.
+* **Interactive Dashboard**: `generate_summary.py` produces a `summary.html` dashboard with previews and links.
+* **Quantitative Reporting**: Outputs `report.csv` with key stats for every validated pattern.
+* **Unit Tested Logic**: `test_pattern_detector.py` ensures invalid patterns are rejected.
+
+---
+
+## 📂 Project Structure
+
+```
+/
+├── data/
+│   └── test_data.csv         # Real sample for unit testing
+│
+├── html_plots/               # Output directory for interactive plots
+├── patterns/                 # Output directory for static images
+│
+├── download_data.py          # Fetches market data from Binance
+├── generate_summary.py       # Creates the interactive summary dashboard
+├── main.py                   # Main analysis script
+├── pattern_detector.py       # Core logic for detection and validation
+├── plot_utils.py             # Plot generation utilities
+├── README.md                 # Project documentation
+├── requirements.txt          # Dependencies
+└── test_pattern_detector.py  # Unit tests
+```
+
+---
+
+## 🛠️ Setup and Installation
+
+### Prerequisites
+
+* Python 3.8 or newer
+* pip (Python package installer)
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repository-url>
+cd <repository-name>
+```
+
+### 2. Install Dependencies
+
+```bash
+
+# Install required packages
+pip install -r requirements.txt
+```
+
+**Note on TA-Lib**: You may need to install the TA-Lib C library manually if errors occur.
+
+---
+
+## 🚀 Usage Workflow
+
+### Download the Data
+
+```bash
+python download_data.py
+```
+
+Generates: `data/your_binance_futures_data_2024.csv`
+
+### Run the Main Analysis
+
+```bash
+python main.py
+```
+
+Generates:
+
+* `.png` and `.html` files for valid patterns
+* `report.csv`
+* `summary.html`
+
+### Review the Results
+
+* **Dashboard**: Open `summary.html`
+* **Static Images**: `/patterns/*.png`
+* **Interactive Plots**: `/html_plots/*.html`
+* **Raw Data**: `report.csv`
+
+---
+
+## ✅ Running Unit Tests
+
+```bash
+python -m unittest test_pattern_detector.py
+```
+
+Expect output: `OK` if all tests pass.
+
+---
+
+## ⚙️ Configuration
+
+The detection criteria can be adjusted in the `PatternDetector` class in `pattern_detector.py`:
+
+```python
+self.validation_params = {
+    "min_cup_duration": 30,
+    "max_cup_duration": 200,
+    "min_handle_depth": 0.01,
+    ...
+}
+```
+
+Modify values to experiment with stricter or looser conditions.
+
+---
