@@ -1,0 +1,868 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cup & Handle Pattern Analysis Dashboard</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 1400px; margin: 20px auto; padding: 0 20px; background-color: #f9f9f9; }
+            h1, h2 { color: #1a1a1a; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; }
+            .controls { margin-bottom: 30px; text-align: center; }
+            .btn { background-color: #007bff; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+            .btn:hover { background-color: #0056b3; }
+            .btn.active { background-color: #0056b3; }
+            .content-section { display: none; } /* Hidden by default */
+            .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
+            /* New 2-column grid for plots */
+            .grid-container-plots { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 20px; }
+            .grid-item { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
+            .grid-item h4 { margin-top: 0; }
+            .grid-item img { max-width: 100%; border-radius: 4px; cursor: pointer; } /* Added cursor pointer */
+            /* THIS IS THE CHANGED LINE */
+            .grid-item iframe { width: 100%; height: 400px; border: none; border-radius: 4px; pointer-events: none; }
+            .grid-item a { color: #007bff; text-decoration: none; font-size: 0.9em; }
+            table { border-collapse: collapse; width: 100%; margin-top: 20px; font-size: 0.9em; }
+            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+
+            /* New Modal (Lightbox) Styles */
+            .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+            .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+            .close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; transition: 0.3s; }
+            .close:hover, .close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
+        </style>
+    </head>
+    <body>
+        <h1>Cup & Handle Pattern Analysis Dashboard</h1>
+        <p>This dashboard summarizes the <strong>30</strong> valid patterns detected by the analysis script. Use the buttons below to explore the results.</p>
+        
+        <div class="controls">
+            <button class="btn" onclick="showSection('pngs')">View Static Images</button>
+            <button class="btn" onclick="showSection('plots')">View Interactive Plots</button>
+            <button class="btn" onclick="showSection('report')">View Full Report</button>
+        </div>
+
+        <div id="pngs" class="content-section">
+            <h2>Static Pattern Images</h2>
+            <p>Click on any image to see a larger preview.</p>
+            <div class="grid-container">
+    
+                <div class="grid-item">
+                    <h4>Pattern #1</h4>
+                    <img src="patterns\cup_handle_1.png" alt="Pattern #1" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #2</h4>
+                    <img src="patterns\cup_handle_2.png" alt="Pattern #2" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #3</h4>
+                    <img src="patterns\cup_handle_3.png" alt="Pattern #3" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #4</h4>
+                    <img src="patterns\cup_handle_4.png" alt="Pattern #4" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #5</h4>
+                    <img src="patterns\cup_handle_5.png" alt="Pattern #5" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #6</h4>
+                    <img src="patterns\cup_handle_6.png" alt="Pattern #6" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #7</h4>
+                    <img src="patterns\cup_handle_7.png" alt="Pattern #7" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #8</h4>
+                    <img src="patterns\cup_handle_8.png" alt="Pattern #8" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #9</h4>
+                    <img src="patterns\cup_handle_9.png" alt="Pattern #9" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #10</h4>
+                    <img src="patterns\cup_handle_10.png" alt="Pattern #10" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #11</h4>
+                    <img src="patterns\cup_handle_11.png" alt="Pattern #11" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #12</h4>
+                    <img src="patterns\cup_handle_12.png" alt="Pattern #12" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #13</h4>
+                    <img src="patterns\cup_handle_13.png" alt="Pattern #13" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #14</h4>
+                    <img src="patterns\cup_handle_14.png" alt="Pattern #14" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #15</h4>
+                    <img src="patterns\cup_handle_15.png" alt="Pattern #15" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #16</h4>
+                    <img src="patterns\cup_handle_16.png" alt="Pattern #16" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #17</h4>
+                    <img src="patterns\cup_handle_17.png" alt="Pattern #17" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #18</h4>
+                    <img src="patterns\cup_handle_18.png" alt="Pattern #18" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #19</h4>
+                    <img src="patterns\cup_handle_19.png" alt="Pattern #19" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #20</h4>
+                    <img src="patterns\cup_handle_20.png" alt="Pattern #20" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #21</h4>
+                    <img src="patterns\cup_handle_21.png" alt="Pattern #21" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #22</h4>
+                    <img src="patterns\cup_handle_22.png" alt="Pattern #22" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #23</h4>
+                    <img src="patterns\cup_handle_23.png" alt="Pattern #23" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #24</h4>
+                    <img src="patterns\cup_handle_24.png" alt="Pattern #24" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #25</h4>
+                    <img src="patterns\cup_handle_25.png" alt="Pattern #25" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #26</h4>
+                    <img src="patterns\cup_handle_26.png" alt="Pattern #26" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #27</h4>
+                    <img src="patterns\cup_handle_27.png" alt="Pattern #27" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #28</h4>
+                    <img src="patterns\cup_handle_28.png" alt="Pattern #28" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #29</h4>
+                    <img src="patterns\cup_handle_29.png" alt="Pattern #29" onclick="openModal(this.src)">
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #30</h4>
+                    <img src="patterns\cup_handle_30.png" alt="Pattern #30" onclick="openModal(this.src)">
+                </div>
+        </div></div>
+        <div id="plots" class="content-section">
+            <h2>Interactive Plot Previews</h2>
+            <p>Click the link below each preview to open the fully interactive chart in a new tab.</p>
+            <div class="grid-container-plots">
+    
+                <div class="grid-item">
+                    <h4>Pattern #1</h4>
+                    <iframe src="html_plots\cup_handle_1.html"></iframe>
+                    <a href="html_plots\cup_handle_1.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #2</h4>
+                    <iframe src="html_plots\cup_handle_2.html"></iframe>
+                    <a href="html_plots\cup_handle_2.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #3</h4>
+                    <iframe src="html_plots\cup_handle_3.html"></iframe>
+                    <a href="html_plots\cup_handle_3.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #4</h4>
+                    <iframe src="html_plots\cup_handle_4.html"></iframe>
+                    <a href="html_plots\cup_handle_4.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #5</h4>
+                    <iframe src="html_plots\cup_handle_5.html"></iframe>
+                    <a href="html_plots\cup_handle_5.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #6</h4>
+                    <iframe src="html_plots\cup_handle_6.html"></iframe>
+                    <a href="html_plots\cup_handle_6.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #7</h4>
+                    <iframe src="html_plots\cup_handle_7.html"></iframe>
+                    <a href="html_plots\cup_handle_7.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #8</h4>
+                    <iframe src="html_plots\cup_handle_8.html"></iframe>
+                    <a href="html_plots\cup_handle_8.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #9</h4>
+                    <iframe src="html_plots\cup_handle_9.html"></iframe>
+                    <a href="html_plots\cup_handle_9.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #10</h4>
+                    <iframe src="html_plots\cup_handle_10.html"></iframe>
+                    <a href="html_plots\cup_handle_10.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #11</h4>
+                    <iframe src="html_plots\cup_handle_11.html"></iframe>
+                    <a href="html_plots\cup_handle_11.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #12</h4>
+                    <iframe src="html_plots\cup_handle_12.html"></iframe>
+                    <a href="html_plots\cup_handle_12.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #13</h4>
+                    <iframe src="html_plots\cup_handle_13.html"></iframe>
+                    <a href="html_plots\cup_handle_13.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #14</h4>
+                    <iframe src="html_plots\cup_handle_14.html"></iframe>
+                    <a href="html_plots\cup_handle_14.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #15</h4>
+                    <iframe src="html_plots\cup_handle_15.html"></iframe>
+                    <a href="html_plots\cup_handle_15.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #16</h4>
+                    <iframe src="html_plots\cup_handle_16.html"></iframe>
+                    <a href="html_plots\cup_handle_16.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #17</h4>
+                    <iframe src="html_plots\cup_handle_17.html"></iframe>
+                    <a href="html_plots\cup_handle_17.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #18</h4>
+                    <iframe src="html_plots\cup_handle_18.html"></iframe>
+                    <a href="html_plots\cup_handle_18.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #19</h4>
+                    <iframe src="html_plots\cup_handle_19.html"></iframe>
+                    <a href="html_plots\cup_handle_19.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #20</h4>
+                    <iframe src="html_plots\cup_handle_20.html"></iframe>
+                    <a href="html_plots\cup_handle_20.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #21</h4>
+                    <iframe src="html_plots\cup_handle_21.html"></iframe>
+                    <a href="html_plots\cup_handle_21.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #22</h4>
+                    <iframe src="html_plots\cup_handle_22.html"></iframe>
+                    <a href="html_plots\cup_handle_22.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #23</h4>
+                    <iframe src="html_plots\cup_handle_23.html"></iframe>
+                    <a href="html_plots\cup_handle_23.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #24</h4>
+                    <iframe src="html_plots\cup_handle_24.html"></iframe>
+                    <a href="html_plots\cup_handle_24.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #25</h4>
+                    <iframe src="html_plots\cup_handle_25.html"></iframe>
+                    <a href="html_plots\cup_handle_25.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #26</h4>
+                    <iframe src="html_plots\cup_handle_26.html"></iframe>
+                    <a href="html_plots\cup_handle_26.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #27</h4>
+                    <iframe src="html_plots\cup_handle_27.html"></iframe>
+                    <a href="html_plots\cup_handle_27.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #28</h4>
+                    <iframe src="html_plots\cup_handle_28.html"></iframe>
+                    <a href="html_plots\cup_handle_28.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #29</h4>
+                    <iframe src="html_plots\cup_handle_29.html"></iframe>
+                    <a href="html_plots\cup_handle_29.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        
+                <div class="grid-item">
+                    <h4>Pattern #30</h4>
+                    <iframe src="html_plots\cup_handle_30.html"></iframe>
+                    <a href="html_plots\cup_handle_30.html" target="_blank">Open Full Interactive Chart</a>
+                </div>
+        </div></div>
+        <div id="report" class="content-section">
+            <h2>Full Data Report</h2>
+            <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>pattern_id</th>
+      <th>status</th>
+      <th>reason</th>
+      <th>start_time</th>
+      <th>end_time</th>
+      <th>cup_depth</th>
+      <th>cup_duration</th>
+      <th>handle_depth</th>
+      <th>handle_duration</th>
+      <th>r_squared_fit</th>
+      <th>breakout_candle_timestamp</th>
+      <th>volume_spike</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 16:15:00</td>
+      <td>2024-01-01 20:46:00</td>
+      <td>205.8</td>
+      <td>270</td>
+      <td>-742.0</td>
+      <td>50</td>
+      <td>0.960966</td>
+      <td>2024-01-01 20:46:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 18:15:00</td>
+      <td>2024-01-01 20:46:00</td>
+      <td>195.2</td>
+      <td>150</td>
+      <td>-372.9</td>
+      <td>50</td>
+      <td>0.932297</td>
+      <td>2024-01-01 20:46:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 18:25:00</td>
+      <td>2024-01-01 20:46:00</td>
+      <td>137.1</td>
+      <td>140</td>
+      <td>-451.7</td>
+      <td>50</td>
+      <td>0.931808</td>
+      <td>2024-01-01 20:46:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 20:13:00</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>210.3</td>
+      <td>295</td>
+      <td>-935.0</td>
+      <td>41</td>
+      <td>0.938872</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 20:45:00</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>199.0</td>
+      <td>263</td>
+      <td>-834.5</td>
+      <td>41</td>
+      <td>0.965210</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 22:01:00</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>297.8</td>
+      <td>187</td>
+      <td>-1026.2</td>
+      <td>41</td>
+      <td>0.967191</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-01 23:33:00</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>160.6</td>
+      <td>95</td>
+      <td>-600.4</td>
+      <td>41</td>
+      <td>0.924900</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 00:33:00</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>190.6</td>
+      <td>35</td>
+      <td>55.6</td>
+      <td>41</td>
+      <td>0.943167</td>
+      <td>2024-01-02 01:09:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 04:15:00</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>130.5</td>
+      <td>291</td>
+      <td>-228.7</td>
+      <td>37</td>
+      <td>0.899475</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 04:30:00</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>192.6</td>
+      <td>276</td>
+      <td>-265.5</td>
+      <td>37</td>
+      <td>0.899739</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 04:30:00</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>249.2</td>
+      <td>276</td>
+      <td>-265.5</td>
+      <td>37</td>
+      <td>0.899739</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 05:48:00</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>182.0</td>
+      <td>198</td>
+      <td>-310.9</td>
+      <td>37</td>
+      <td>0.899769</td>
+      <td>2024-01-02 09:07:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 20:54:00</td>
+      <td>2024-01-02 22:20:00</td>
+      <td>315.4</td>
+      <td>85</td>
+      <td>42.4</td>
+      <td>26</td>
+      <td>0.869235</td>
+      <td>2024-01-02 22:20:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 21:05:00</td>
+      <td>2024-01-02 22:11:00</td>
+      <td>166.5</td>
+      <td>65</td>
+      <td>-36.9</td>
+      <td>35</td>
+      <td>0.869616</td>
+      <td>2024-01-02 22:11:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-02 23:25:00</td>
+      <td>2024-01-03 02:12:00</td>
+      <td>229.4</td>
+      <td>163</td>
+      <td>-168.6</td>
+      <td>9</td>
+      <td>0.869643</td>
+      <td>2024-01-03 02:12:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 01:22:00</td>
+      <td>2024-01-03 02:12:00</td>
+      <td>131.3</td>
+      <td>46</td>
+      <td>13.8</td>
+      <td>9</td>
+      <td>0.904895</td>
+      <td>2024-01-03 02:12:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 13:29:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>154.3</td>
+      <td>180</td>
+      <td>-33.9</td>
+      <td>47</td>
+      <td>0.866954</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 13:46:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>272.6</td>
+      <td>163</td>
+      <td>-12.0</td>
+      <td>47</td>
+      <td>0.881932</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 13:54:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>125.0</td>
+      <td>155</td>
+      <td>-116.0</td>
+      <td>47</td>
+      <td>0.885301</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 14:07:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>357.6</td>
+      <td>142</td>
+      <td>-136.0</td>
+      <td>47</td>
+      <td>0.885432</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 14:26:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>179.8</td>
+      <td>123</td>
+      <td>-352.5</td>
+      <td>47</td>
+      <td>0.882590</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 14:31:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>190.1</td>
+      <td>118</td>
+      <td>-324.9</td>
+      <td>47</td>
+      <td>0.879296</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 14:44:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>120.0</td>
+      <td>105</td>
+      <td>-220.0</td>
+      <td>47</td>
+      <td>0.872126</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 14:49:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>138.9</td>
+      <td>100</td>
+      <td>-255.0</td>
+      <td>47</td>
+      <td>0.867230</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 14:55:00</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>112.2</td>
+      <td>94</td>
+      <td>-301.7</td>
+      <td>47</td>
+      <td>0.859693</td>
+      <td>2024-01-03 16:30:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 15:27:00</td>
+      <td>2024-01-03 16:05:00</td>
+      <td>123.3</td>
+      <td>37</td>
+      <td>-316.7</td>
+      <td>35</td>
+      <td>0.896658</td>
+      <td>2024-01-03 16:05:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-03 15:34:00</td>
+      <td>2024-01-03 16:05:00</td>
+      <td>166.6</td>
+      <td>30</td>
+      <td>-271.0</td>
+      <td>35</td>
+      <td>0.936127</td>
+      <td>2024-01-03 16:05:00</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-04 00:37:00</td>
+      <td>2024-01-04 03:16:00</td>
+      <td>137.8</td>
+      <td>158</td>
+      <td>-8.1</td>
+      <td>47</td>
+      <td>0.864144</td>
+      <td>2024-01-04 03:16:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-04 01:01:00</td>
+      <td>2024-01-04 03:16:00</td>
+      <td>128.5</td>
+      <td>134</td>
+      <td>-17.6</td>
+      <td>47</td>
+      <td>0.873879</td>
+      <td>2024-01-04 03:16:00</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>valid</td>
+      <td>All rules passed</td>
+      <td>2024-01-04 01:14:00</td>
+      <td>2024-01-04 03:15:00</td>
+      <td>276.1</td>
+      <td>104</td>
+      <td>-112.2</td>
+      <td>36</td>
+      <td>0.870129</td>
+      <td>2024-01-04 03:15:00</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+    
+        <div id="myModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="modalImage">
+        </div>
+    
+        <script>
+            // Get modal elements
+            var modal = document.getElementById("myModal");
+            var modalImg = document.getElementById("modalImage");
+
+            function openModal(src) {
+                modal.style.display = "block";
+                modalImg.src = src;
+            }
+
+            function closeModal() {
+                modal.style.display = "none";
+            }
+
+            function showSection(sectionId) {
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.querySelectorAll('.btn').forEach(button => {
+                    button.classList.remove('active');
+                });
+                document.getElementById(sectionId).style.display = 'block';
+                event.target.classList.add('active');
+            }
+            
+            // Show the first section by default on page load
+            document.addEventListener('DOMContentLoaded', (event) => {
+                document.querySelector('.btn').click();
+            });
+        </script>
+    </body>
+    </html>
+    
