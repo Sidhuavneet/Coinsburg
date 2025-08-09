@@ -5,7 +5,7 @@ import os
 REPORT_FILE = 'report.csv'
 PATTERNS_DIR = 'patterns'
 HTML_PLOTS_DIR = 'html_plots'
-OUTPUT_FILE = 'summary.html'
+OUTPUT_FILE = 'index.html'
 
 def create_summary_dashboard():
     """
