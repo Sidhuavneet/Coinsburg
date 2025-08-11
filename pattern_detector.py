@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from scipy.signal import find_peaks
+from scipy.signal import argrelextrema
 import talib
 
 class PatternDetector:
@@ -13,12 +13,18 @@ class PatternDetector:
             self.config = {
                 "cup_duration": (30, 300),
                 "handle_duration": (5, 50),
-                "rim_level_diff_max": 0.10,
+                "rim_level_diff_max": 0.05,  # Tightened to 5% for better rim equality
                 "cup_depth_min_factor": 2.0,
-                "handle_retrace_max": 0.40,
+                "handle_retrace_max": 0.333,  # Stricter to ~1/3 cup depth
                 "r_squared_min": 0.85,
                 "breakout_atr_factor": 1.5,
-                "volume_spike_factor": 1.5
+                "volume_spike_factor": 1.5,
+                "smoothing_window": 3,  # For price smoothing before extrema
+                "extrema_window": 10,  # Window for refining local max/min
+                "extrema_prominence_factor": 1.0,  # Prominence = factor * avg_candle_size
+                "vertex_position_min": 0.3,  # Vertex should be 30-70% into cup for symmetry
+                "vertex_position_max": 0.7,
+                "min_curvature": 1e-5  # Minimum leading coefficient for sufficient curvature
             }
         else:
             self.config = config
@@ -48,9 +54,17 @@ class PatternDetector:
         avg_candle_size = (df['high'] - df['low']).mean()
         print(f"Average candle size: {avg_candle_size:.2f}")
         
-        # Find swing highs and lows using prominence based on avg candle size
-        swing_highs, _ = find_peaks(df['high'], prominence=avg_candle_size * 0.5, distance=5)
-        swing_lows, _ = find_peaks(-df['low'], prominence=avg_candle_size * 0.5, distance=5)
+        # Smooth prices for better extrema detection
+        smooth_prices = df['close'].rolling(window=self.config['smoothing_window']).mean().dropna()
+        
+        # Find local maxima and minima using argrelextrema
+        local_max = argrelextrema(smooth_prices.values, np.greater, order=self.config['extrema_window'])[0]
+        local_min = argrelextrema(smooth_prices.values, np.less, order=self.config['extrema_window'])[0]
+        
+        # Refine with prominence
+        prominence = self.config['extrema_prominence_factor'] * avg_candle_size
+        swing_highs = [i for i in local_max if df['high'].iloc[max(0, i-5):min(len(df), i+6)].max() - df['high'].iloc[i] < prominence]
+        swing_lows = [i for i in local_min if df['low'].iloc[i] - df['low'].iloc[max(0, i-5):min(len(df), i+6)].min() < prominence]
         
         print(f"Found {len(swing_highs)} swing highs and {len(swing_lows)} swing lows.")
 
@@ -58,15 +72,15 @@ class PatternDetector:
         covered_ranges = []
 
         for low_idx in swing_lows:
-            possible_left_rims = swing_highs[swing_highs < low_idx]
-            if len(possible_left_rims) == 0:
+            possible_left_rims = [h for h in swing_highs if h < low_idx]
+            if not possible_left_rims:
                 continue
             
-            left_rim_idx = possible_left_rims[-1]  # Most recent swing high before bottom
+            left_rim_idx = max(possible_left_rims)  # Most recent swing high before bottom
             left_rim_price = df['high'].iloc[left_rim_idx]
 
-            possible_right_rims = swing_highs[swing_highs > low_idx]
-            if len(possible_right_rims) == 0:
+            possible_right_rims = [h for h in swing_highs if h > low_idx]
+            if not possible_right_rims:
                 continue
 
             for right_rim_idx in possible_right_rims:
@@ -87,14 +101,15 @@ class PatternDetector:
                 if cup_depth < self.config["cup_depth_min_factor"] * avg_candle_size:
                     continue
 
-                # Cup data for fitting: use lows for bottom shape
+                # Cup data for fitting: use smoothed lows for bottom shape
                 cup_data = df.iloc[left_rim_idx: right_rim_idx + 1]
-                x_cup = np.arange(len(cup_data))
-                y_cup = cup_data['low'].values
+                cup_smooth_lows = cup_data['low'].rolling(window=self.config['smoothing_window']).mean().dropna()
+                x_cup = np.arange(len(cup_smooth_lows))
+                y_cup = cup_smooth_lows.values
                 
                 # Fit parabola (degree 2)
                 coeffs = np.polyfit(x_cup, y_cup, 2)
-                if coeffs[0] <= 0:  # Ensure upward opening for U-shape
+                if coeffs[0] <= self.config['min_curvature']:  # Ensure sufficient upward curvature for U-shape
                     continue
                     
                 p = np.poly1d(coeffs)
@@ -104,12 +119,18 @@ class PatternDetector:
                 if r_squared < self.config["r_squared_min"]:
                     continue
 
+                # Check symmetry: vertex position roughly in middle
+                vertex_x = -coeffs[1] / (2 * coeffs[0])
+                cup_len = len(x_cup)
+                if not (self.config['vertex_position_min'] * cup_len < vertex_x < self.config['vertex_position_max'] * cup_len):
+                    continue  # Asymmetric if vertex not centered
+
                 # Find next swing low after right rim for handle bottom
-                possible_handle_lows = swing_lows[swing_lows > right_rim_idx]
-                if len(possible_handle_lows) == 0:
+                possible_handle_lows = [l for l in swing_lows if l > right_rim_idx]
+                if not possible_handle_lows:
                     continue
                 
-                handle_low_idx = possible_handle_lows[0]  # Next swing low
+                handle_low_idx = min(possible_handle_lows)  # Next swing low
                 handle_duration = handle_low_idx - right_rim_idx
                 if not (self.config["handle_duration"][0] <= handle_duration <= self.config["handle_duration"][1]):
                     continue
@@ -127,13 +148,20 @@ class PatternDetector:
 
                 handle_low = df['low'].iloc[handle_low_idx]
 
-                # Check handle low > cup bottom
-                if handle_low < cup_bottom_price:
+                # Check handle low > cup bottom and in upper half
+                if handle_low < cup_bottom_price or handle_low < cup_bottom_price + 0.5 * cup_depth:
                     continue
 
                 # Handle retrace using avg rim
                 handle_retrace = (avg_rim_price - handle_low) / cup_depth
                 if handle_retrace > self.config["handle_retrace_max"]:
+                    continue
+
+                # Optional: Check downward slope in handle (linear fit on closes)
+                x_handle = np.arange(len(handle_slice))
+                y_handle = handle_slice['close'].values
+                slope, _ = np.polyfit(x_handle, y_handle, 1)[:2]
+                if slope > 0:  # Ensure not upward sloping
                     continue
 
                 # Search for breakout after handle low
@@ -156,9 +184,16 @@ class PatternDetector:
                 if breakout_candle_idx is None:
                     continue
 
-                # Volume spike check (bonus)
+                # Volume spike check (make semi-mandatory by preferring, but keep bonus)
                 avg_volume_cup_handle = df.iloc[left_rim_idx:breakout_candle_idx]['volume'].mean()
                 volume_spike = df['volume'].iloc[breakout_candle_idx] > (avg_volume_cup_handle * self.config["volume_spike_factor"])
+
+                # Optional volume decrease in cup bottom
+                cup_mid = left_rim_idx + cup_duration // 2
+                vol_bottom = df.iloc[cup_mid - 10:cup_mid + 10]['volume'].mean() if cup_duration > 20 else avg_volume_cup_handle
+                vol_sides = (df.iloc[left_rim_idx:left_rim_idx+20]['volume'].mean() + df.iloc[right_rim_idx-20:right_rim_idx]['volume'].mean()) / 2
+                if vol_bottom > vol_sides:
+                    continue  # Skip if volume not decreasing in bottom
 
                 # Check for overlap with previous patterns to avoid duplicates
                 pattern_range = (left_rim_idx, breakout_candle_idx)
